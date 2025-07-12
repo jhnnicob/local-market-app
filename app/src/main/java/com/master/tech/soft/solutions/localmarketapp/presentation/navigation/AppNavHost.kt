@@ -1,13 +1,15 @@
 package com.master.tech.soft.solutions.localmarketapp.presentation.navigation
 
-import com.master.tech.soft.solutions.localmarketapp.presentation.screen.HomeScreen
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.master.tech.soft.solutions.localmarketapp.presentation.screen.HomeScreen
+import com.master.tech.soft.solutions.localmarketapp.presentation.screen.ProductAddScreen
 
 sealed class Screen(val route: String) {
     object Home : Screen("home")
+    object ProductAdd: Screen("product_add");
     object ProductDetail : Screen("product_detail/{productId}")
     object Cart : Screen("cart")
 }
@@ -18,6 +20,10 @@ fun AppNavHost(navController: NavHostController) {
         composable(Screen.Home.route) {
             HomeScreen(navController)
         }
-        // TODO: Add ProductDetail & Cart when available
+        composable(Screen.ProductAdd.route) {
+            ProductAddScreen(
+                onBack = { navController.popBackStack() },
+            )
+        }
     }
 }

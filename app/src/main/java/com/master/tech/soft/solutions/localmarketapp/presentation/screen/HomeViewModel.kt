@@ -63,4 +63,14 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
+
+    fun addProduct(product: Product) {
+        viewModelScope.launch {
+            try {
+                repository.addProduct(product)
+            } catch (e: Exception) {
+                _error.value = e.message
+            }
+        }
+    }
 }

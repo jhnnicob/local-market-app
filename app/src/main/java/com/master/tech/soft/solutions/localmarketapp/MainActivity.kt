@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
+import com.master.tech.soft.solutions.localmarketapp.presentation.navigation.AppNavHost
 import com.master.tech.soft.solutions.localmarketapp.presentation.screen.HomeScreen
 import com.master.tech.soft.solutions.localmarketapp.presentation.screen.HomeViewModel
 import com.master.tech.soft.solutions.localmarketapp.ui.theme.LocalMarketAppTheme
@@ -31,12 +32,8 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
-                    val homeViewModel: HomeViewModel = hiltViewModel()
 
-                    HomeScreen(
-                        navController = navController,
-                        viewModel = homeViewModel
-                    )
+                    AppNavHost(navController = navController)
                 }
             }
         }

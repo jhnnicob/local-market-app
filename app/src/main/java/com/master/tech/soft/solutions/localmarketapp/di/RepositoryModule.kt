@@ -1,9 +1,7 @@
 package com.master.tech.soft.solutions.localmarketapp.di
-import com.master.tech.soft.solutions.localmarketapp.data.remote.api.CartApi
-import com.master.tech.soft.solutions.localmarketapp.data.remote.api.ProductApi
+import com.google.firebase.firestore.FirebaseFirestore
 import com.master.tech.soft.solutions.localmarketapp.data.repository.ProductRepositoryImpl
 import com.master.tech.soft.solutions.localmarketapp.domain.repository.ProductRepository
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,8 +14,8 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideProductRepository(api: ProductApi): ProductRepository =
-        ProductRepositoryImpl(api)
+    fun provideProductRepository(firestore: FirebaseFirestore): ProductRepository =
+        ProductRepositoryImpl(firestore)
 
 
 //    @Provides

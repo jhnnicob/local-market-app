@@ -25,9 +25,12 @@ coil = "2.6.0"
 
 # Firebase
 firebaseMessaging = "24.1.2"
+firebase-bom = "32.7.0"
+firebase-analytics = "21.6.1" # Replace with latest if needed
 
 # Firebase Gradle plugin
 googleServices = "4.4.3"
+firebaseFirestoreKtx = "25.1.4"
 
 
 [libraries]
@@ -65,7 +68,9 @@ coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 
 # Firebase
 firebase-messaging = { module = "com.google.firebase:firebase-messaging-ktx", version.ref = "firebaseMessaging" }
-
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx", version.ref = "firebase-analytics" }
+firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
 
 
 [plugins]

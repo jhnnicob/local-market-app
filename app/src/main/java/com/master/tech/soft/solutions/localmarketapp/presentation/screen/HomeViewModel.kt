@@ -1,7 +1,9 @@
 package com.master.tech.soft.solutions.localmarketapp.presentation.screen
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.firestore.ListenerRegistration
 import com.master.tech.soft.solutions.localmarketapp.data.model.Product
 import com.master.tech.soft.solutions.localmarketapp.domain.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,6 +17,8 @@ class HomeViewModel @Inject constructor(
     private val repository: ProductRepository
 ) : ViewModel() {
 
+    private var listener: ListenerRegistration? = null
+
     private val _products = MutableStateFlow<List<Product>>(emptyList())
     val products: StateFlow<List<Product>> = _products
 
@@ -25,10 +29,28 @@ class HomeViewModel @Inject constructor(
     val error: StateFlow<String?> = _error
 
     init {
-        fetchProducts()
+        startListeningToProducts()
     }
 
-    private fun fetchProducts() {
+    fun startListeningToProducts() {
+        listener = repository.listenToProducts(
+            onUpdate = { productList ->
+                _products.value = productList
+                _error.value = null
+            },
+            onError = { error ->
+                Log.e("Firestore", "Live update error", error)
+                _error.value = error.message
+            }
+        )
+    }
+
+    fun stopListeningToProducts() {
+        listener?.remove()
+    }
+
+    // Optional: Use this if you still want to support one-time fetching
+    fun fetchProducts() {
         viewModelScope.launch {
             _loading.value = true
             try {

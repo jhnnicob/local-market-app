@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.master.tech.soft.solutions.localmarketapp.presentation.screen.HomeScreen
 import com.master.tech.soft.solutions.localmarketapp.presentation.screen.ProductAddScreen
+import com.master.tech.soft.solutions.localmarketapp.presentation.screen.ProductDetailScreen
 
 sealed class Screen(val route: String) {
     object Home : Screen("home")
@@ -25,5 +26,13 @@ fun AppNavHost(navController: NavHostController) {
                 onBack = { navController.popBackStack() },
             )
         }
+        composable("${Screen.ProductDetail.route}/{productId}") { backStackEntry ->
+            val productId = backStackEntry.arguments?.getString("productId") ?: ""
+            ProductDetailScreen(
+                productId = productId,
+                onBack = { navController.popBackStack() }
+            )
+        }
+
     }
 }

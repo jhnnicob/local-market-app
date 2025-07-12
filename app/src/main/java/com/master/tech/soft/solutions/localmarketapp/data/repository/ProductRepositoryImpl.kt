@@ -45,22 +45,22 @@ class ProductRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getProductById(id: String): Product = withContext(Dispatchers.IO) {
+    override suspend fun getProductById(id: String): Product? = withContext(Dispatchers.IO) {
         try {
             val snapshot = productsCollection.document(id).get().await()
             val product = snapshot.toObject(Product::class.java)
             if (product != null) {
                 Log.d(TAG, "Fetched product with id: $id")
-                product
             } else {
                 Log.e(TAG, "Product with id $id not found")
-                throw NoSuchElementException("Product with id $id not found.")
             }
+            product
         } catch (e: Exception) {
             Log.e(TAG, "Error fetching product by id: $id", e)
-            throw e
+            null
         }
     }
+
 
     override suspend fun addProduct(product: Product): Boolean = withContext(Dispatchers.IO) {
         try {

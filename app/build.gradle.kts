@@ -82,5 +82,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
 
+    implementation(libs.coil)
+
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4")
 }

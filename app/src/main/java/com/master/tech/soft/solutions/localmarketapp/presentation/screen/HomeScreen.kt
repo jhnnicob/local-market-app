@@ -65,7 +65,7 @@ fun HomeScreen(
                     LazyColumn {
                         items(products.value) { product ->
                             ProductItem(product = product) {
-                                // navController.navigate("product_detail/${product.id}")
+                                 navController.navigate("${Screen.ProductDetail.route}/${product.id}")
                             }
                             Spacer(modifier = Modifier.height(8.dp))
                         }

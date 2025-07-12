@@ -1,6 +1,7 @@
 package com.master.tech.soft.solutions.localmarketapp.presentation.screen
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.ListenerRegistration
@@ -11,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import androidx.compose.runtime.State
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -27,6 +29,9 @@ class HomeViewModel @Inject constructor(
 
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
+
+    private val _selectedProduct = mutableStateOf<Product?>(null)
+    val selectedProduct: State<Product?> = _selectedProduct
 
     init {
         startListeningToProducts()
@@ -70,6 +75,23 @@ class HomeViewModel @Inject constructor(
                 repository.addProduct(product)
             } catch (e: Exception) {
                 _error.value = e.message
+            }
+        }
+    }
+
+    fun loadProductById(id: String) {
+        if (_selectedProduct.value?.id == id) return // ✅ Already loaded, skip re-fetch
+
+        viewModelScope.launch {
+            _loading.value = true
+            try {
+                val product = repository.getProductById(id)
+                _selectedProduct.value = product
+            } catch (e: Exception) {
+                Log.e("HomeViewModel", "Error loading product", e)
+                _selectedProduct.value = null
+            } finally {
+                _loading.value = false
             }
         }
     }

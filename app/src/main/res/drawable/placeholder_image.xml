@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/drawable/placeholder_image.xml -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#CCCCCC"
+        android:pathData="M4,4h16v16H4z" />
+    <path
+        android:fillColor="#AAAAAA"
+        android:pathData="M6,6l6,7 3,-3 3,4v2H6z" />
+</vector>

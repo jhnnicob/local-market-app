@@ -85,4 +85,5 @@ dependencies {
     implementation(libs.coil)
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4")
+    implementation("androidx.compose.ui:ui-text-google-fonts:1.5.0")
 }

@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -26,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.master.tech.soft.solutions.localmarketapp.data.model.Product
+import com.master.tech.soft.solutions.localmarketapp.presentation.screen.home.HomeViewModel
 
 @Composable
 fun ProductDetailScreen(
@@ -33,77 +33,77 @@ fun ProductDetailScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onBack: () -> Unit = {}
 ) {
-    val productState = viewModel.selectedProduct
-    val isLoading = viewModel.loading.collectAsState()
-    val errorMessage = viewModel.error.collectAsState()
-
-    LaunchedEffect(productId) {
-        viewModel.loadProductById(productId)
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        IconButton(onClick = onBack) {
-            Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-        }
-
-        when {
-            isLoading.value -> {
-                Box (modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopStart) {
-                    SkeletonProductDetail()
-                }
-            }
-            errorMessage.value != null -> {
-                Text("Error: $errorMessage", color = MaterialTheme.colorScheme.error)
-            }
-            productState.value != null -> {
-                ProductDetailContent(product = productState.value!!)
-            }
-            else -> {
-                Text("Product not found.", color = MaterialTheme.colorScheme.error)
-            }
-        }
-    }
-}
-
-@Composable
-fun ProductDetailContent(product: Product) {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = product.name,
-            style = MaterialTheme.typography.headlineMedium
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = "₱${product.price}",
-            style = MaterialTheme.typography.headlineSmall
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(text = product.description ?: "No description")
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(text = "Category: ${product.category}")
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(text = if (product.inStock) "✅ In Stock" else "❌ Out of Stock")
-        Spacer(modifier = Modifier.height(16.dp))
-
-        if (!product.imageUrl.isNullOrEmpty()) {
-            AsyncImage(
-                model = product.imageUrl,
-                contentDescription = product.name,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp),
-                contentScale = ContentScale.Crop
-            )
-        }
-    }
+//    val productState = viewModel.selectedProduct
+//    val isLoading = viewModel.loading.collectAsState()
+//    val errorMessage = viewModel.error.collectAsState()
+//
+//    LaunchedEffect(productId) {
+//        viewModel.loadProductById(productId)
+//    }
+//
+//    Column(
+//        modifier = Modifier
+//            .fillMaxSize()
+//            .padding(16.dp)
+//    ) {
+//        IconButton(onClick = onBack) {
+//            Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+//        }
+//
+//        when {
+//            isLoading.value -> {
+//                Box (modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopStart) {
+//                    SkeletonProductDetail()
+//                }
+//            }
+//            errorMessage.value != null -> {
+//                Text("Error: $errorMessage", color = MaterialTheme.colorScheme.error)
+//            }
+//            productState.value != null -> {
+//                ProductDetailContent(product = productState.value!!)
+//            }
+//            else -> {
+//                Text("Product not found.", color = MaterialTheme.colorScheme.error)
+//            }
+//        }
+//    }
+//}
+//
+//@Composable
+//fun ProductDetailContent(product: Product) {
+//    Column(modifier = Modifier.fillMaxWidth()) {
+//        Text(
+//            text = product.name,
+//            style = MaterialTheme.typography.headlineMedium
+//        )
+//        Spacer(modifier = Modifier.height(8.dp))
+//
+//        Text(
+//            text = "₱${product.price}",
+//            style = MaterialTheme.typography.headlineSmall
+//        )
+//        Spacer(modifier = Modifier.height(8.dp))
+//
+//        Text(text = product.description ?: "No description")
+//        Spacer(modifier = Modifier.height(8.dp))
+//
+//        Text(text = "Category: ${product.category}")
+//        Spacer(modifier = Modifier.height(8.dp))
+//
+//        Text(text = if (product.inStock) "✅ In Stock" else "❌ Out of Stock")
+//        Spacer(modifier = Modifier.height(16.dp))
+//
+//        if (!product.imageUrl.isNullOrEmpty()) {
+//            AsyncImage(
+//                model = product.imageUrl,
+//                contentDescription = product.name,
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(200.dp),
+//                contentScale = ContentScale.Crop
+//            )
+//        }
+//    }
 }
 
 @Composable

@@ -9,7 +9,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
 @Composable
-fun BottomNavigationBar(navController: NavHostController) {
+fun BottomNavigationBar(
+    navController: NavHostController,
+    onClicked: () -> Unit
+) {
     val items = listOf(
         BottomNavItem.Home,
         BottomNavItem.Explore,
@@ -22,14 +25,16 @@ fun BottomNavigationBar(navController: NavHostController) {
 
     NavigationBar {
         items.forEach { item ->
+            val isAdd = item == BottomNavItem.Add
             NavigationBarItem(
                 icon = { Icon(imageVector = item.icon, contentDescription = item.label) },
                 label = { Text(text = item.label) },
                 selected = currentRoute == item.route,
                 onClick = {
-                    if (currentRoute != item.route) {
+                    if(isAdd) {
+                        onClicked()
+                    } else if (currentRoute != item.route) {
                         navController.navigate(item.route) {
-                            // Avoid stacking the same destination
                             popUpTo(navController.graph.startDestinationId) {
                                 saveState = true
                             }

@@ -3,6 +3,7 @@ package com.master.tech.soft.solutions.localmarketapp.data.repository
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.Query
 import com.master.tech.soft.solutions.localmarketapp.data.model.Product
 import com.master.tech.soft.solutions.localmarketapp.domain.repository.ProductRepository
 import kotlinx.coroutines.Dispatchers
@@ -64,7 +65,9 @@ class ProductRepositoryImpl @Inject constructor(
 
     override suspend fun addProduct(product: Product): Boolean = withContext(Dispatchers.IO) {
         try {
-            productsCollection.document(product.id).set(product).await()
+            val now = System.currentTimeMillis()
+            val newProduct = product.copy(createdAt = now, updatedAt = now)
+            productsCollection.document(product.id).set(newProduct).await()
             Log.d(TAG, "Added product with id: ${product.id}")
             true
         } catch (e: Exception) {
@@ -72,6 +75,7 @@ class ProductRepositoryImpl @Inject constructor(
             false
         }
     }
+
 
     override suspend fun updateProduct(product: Product): Boolean = withContext(Dispatchers.IO) {
         try {
@@ -92,6 +96,23 @@ class ProductRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             Log.e(TAG, "Error deleting product with id: $id", e)
             false
+        }
+    }
+
+    override suspend fun getRecentlyListedProducts(limit: Int): List<Product> = withContext(Dispatchers.IO) {
+        try {
+            val snapshot = productsCollection
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .limit(limit.toLong())
+                .get()
+                .await()
+
+            val products = snapshot.documents.mapNotNull { it.toObject(Product::class.java) }
+            Log.d(TAG, "Fetched ${products.size} recently listed products")
+            products
+        } catch (e: Exception) {
+            Log.e(TAG, "Error fetching recently listed products", e)
+            emptyList()
         }
     }
 }

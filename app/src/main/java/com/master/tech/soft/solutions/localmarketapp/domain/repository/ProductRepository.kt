@@ -9,5 +9,6 @@ interface ProductRepository {
     suspend fun addProduct(product: Product): Boolean
     suspend fun updateProduct(product: Product): Boolean
     suspend fun deleteProduct(id: String): Boolean
+    suspend fun getRecentlyListedProducts(limit: Int = 10): List<Product>
     fun listenToProducts(onUpdate: (List<Product>) -> Unit, onError: (Exception) -> Unit): ListenerRegistration
 }

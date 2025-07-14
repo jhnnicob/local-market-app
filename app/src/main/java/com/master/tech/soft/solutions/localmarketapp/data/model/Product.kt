@@ -7,5 +7,7 @@ data class Product(
     val price: Double = 0.0,
     val imageUrl: String? = null,
     val category: String? = null,
-    val inStock: Boolean = true
+    val inStock: Boolean = true,
+    val createdAt: Long = System.currentTimeMillis(),
+    val updatedAt: Long = System.currentTimeMillis()
 )

@@ -9,9 +9,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,8 +27,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.component1
+import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.component2
+import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.component3
+import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.component4
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -48,9 +53,10 @@ fun ProductAddBottomSheet(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
+
     val context = LocalContext.current
 
-    // States
+    // Form States
     val name = remember { mutableStateOf("") }
     val description = remember { mutableStateOf("") }
     val price = remember { mutableStateOf("") }
@@ -58,12 +64,12 @@ fun ProductAddBottomSheet(
     val category = remember { mutableStateOf("") }
     val inStock = remember { mutableStateOf(true) }
 
-    // Focus Requesters for keyboard navigation
-    val focusName = remember { FocusRequester() }
-    val focusDesc = remember { FocusRequester() }
-    val focusPrice = remember { FocusRequester() }
-    val focusImage = remember { FocusRequester() }
-    val focusCategory = remember { FocusRequester() }
+    // Error states
+    val nameError = remember { mutableStateOf(false) }
+    val priceError = remember { mutableStateOf(false) }
+
+    val focusManager = LocalFocusManager.current
+    val (descFocus, priceFocus, imageFocus, categoryFocus) = remember { FocusRequester.createRefs() }
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -76,6 +82,7 @@ fun ProductAddBottomSheet(
     ) {
         Column(
             modifier = Modifier
+                .verticalScroll(rememberScrollState())
                 .fillMaxWidth()
                 .padding(24.dp)
         ) {
@@ -90,72 +97,55 @@ fun ProductAddBottomSheet(
             ProductTextField(
                 label = "Name",
                 value = name.value,
-                onValueChange = { name.value = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(focusName),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                keyboardActions = KeyboardActions (
-                    onNext = { focusDesc.requestFocus() }
-                )
+                onValueChange = {
+                    name.value = it
+                    nameError.value = false
+                },
+                isError = nameError.value,
+                errorMessage = "Name is required",
+                onNext = { descFocus.requestFocus() }
             )
 
             ProductTextField(
                 label = "Description",
                 value = description.value,
                 onValueChange = { description.value = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(focusDesc),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                keyboardActions = KeyboardActions(
-                    onNext = { focusPrice.requestFocus() }
-                )
+                onNext = { priceFocus.requestFocus() },
+                modifier = Modifier.focusRequester(descFocus)
             )
 
             ProductTextField(
                 label = "Price",
                 value = price.value,
-                onValueChange = { price.value = it },
+                onValueChange = {
+                    price.value = it
+                    priceError.value = false
+                },
                 keyboardType = KeyboardType.Number,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(focusPrice),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Next
-                ),
-                keyboardActions = KeyboardActions(
-                    onNext = { focusImage.requestFocus() }
-                )
+                imeAction = ImeAction.Next,
+                isError = priceError.value,
+                errorMessage = "Valid price required",
+                leadingIcon = { Text("₱", style = MaterialTheme.typography.titleMedium) },
+                onNext = { imageFocus.requestFocus() },
+                modifier = Modifier.focusRequester(priceFocus)
             )
 
             ProductTextField(
                 label = "Image URL",
                 value = imageUrl.value,
                 onValueChange = { imageUrl.value = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(focusImage),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                keyboardActions = KeyboardActions(
-                    onNext = { focusCategory.requestFocus() }
-                )
+                keyboardType = KeyboardType.Uri,
+                onNext = { categoryFocus.requestFocus() },
+                modifier = Modifier.focusRequester(imageFocus)
             )
 
             ProductTextField(
                 label = "Category",
                 value = category.value,
                 onValueChange = { category.value = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(focusCategory),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        // Optionally hide keyboard or auto submit
-                    }
-                )
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Done,
+                modifier = Modifier.focusRequester(categoryFocus)
             )
 
             Spacer(Modifier.height(8.dp))
@@ -176,12 +166,12 @@ fun ProductAddBottomSheet(
             Button(
                 onClick = {
                     val priceValue = price.value.toDoubleOrNull()
-                    if (name.value.isBlank() || priceValue == null) {
-                        Toast.makeText(
-                            context,
-                            "Please provide name and valid price",
-                            Toast.LENGTH_SHORT
-                        ).show()
+
+                    nameError.value = name.value.isBlank()
+                    priceError.value = priceValue == null
+
+                    if (nameError.value || priceError.value) {
+                        Toast.makeText(context, "Please correct the errors", Toast.LENGTH_SHORT).show()
                         return@Button
                     }
 
@@ -190,7 +180,7 @@ fun ProductAddBottomSheet(
                         id = UUID.randomUUID().toString(),
                         name = name.value,
                         description = description.value,
-                        price = priceValue,
+                        price = priceValue!!,
                         imageUrl = imageUrl.value,
                         category = category.value,
                         inStock = inStock.value,

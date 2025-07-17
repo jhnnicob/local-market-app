@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
+import com.master.tech.soft.solutions.localmarketapp.data.model.Category
 import com.master.tech.soft.solutions.localmarketapp.data.model.Product
 import com.master.tech.soft.solutions.localmarketapp.domain.repository.ProductRepository
 import kotlinx.coroutines.Dispatchers
@@ -115,5 +116,32 @@ class ProductRepositoryImpl @Inject constructor(
             emptyList()
         }
     }
+
+    override suspend fun getAllCategory(): List<Category> = withContext(Dispatchers.IO) {
+        try {
+            val snapshot = FirebaseFirestore.getInstance()
+                .collection("categories")
+                .get()
+                .await()
+
+            val categories = snapshot.documents.map { doc ->
+                val name = doc.getString("name") ?: ""
+                val icon = doc.getString("icon")
+                val color = doc.getString("color")
+                Category(
+                    id = doc.id,
+                    name = name,
+                    icon = icon.toString(),
+                )
+            }
+
+            Log.d(TAG, "Fetched ${categories.size} categories")
+            categories
+        } catch (e: Exception) {
+            Log.e(TAG, "Error fetching categories", e)
+            emptyList()
+        }
+    }
+
 }
 

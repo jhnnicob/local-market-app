@@ -131,7 +131,7 @@ fun ProductAddScreen(
                             price = priceValue,
                             imageUrl = imageUrl.value,
                             category = category.value,
-                            inStock = inStock.value
+                            inStock = inStock.value,
                         )
                         viewModel.addProduct(product)
                     },

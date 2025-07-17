@@ -12,61 +12,46 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import com.master.tech.soft.solutions.localmarketapp.data.model.Category
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryDropdown(
-    isLoading: Boolean,
-    error: String?,
     categories: List<Category>,
     selectedCategory: Category?,
     onCategorySelected: (Category) -> Unit
 ) {
     var expanded = remember { mutableStateOf(false) }
 
-    when {
-        isLoading -> {
-            CircularProgressIndicator()
-        }
+    ExposedDropdownMenuBox(
+        expanded = expanded.value,
+        onExpandedChange = { expanded.value = !expanded.value }
+    ) {
+        TextField(
+            readOnly = true,
+            value = selectedCategory?.name ?: "Select Category",
+            onValueChange = {},
+            label = { Text("Category") },
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded.value)
+            },
+            modifier = Modifier
+                .menuAnchor()
+                .fillMaxWidth()
+        )
 
-        error != null -> {
-            Text("Error: $error", color = Color.Red)
-        }
-
-        else -> {
-            ExposedDropdownMenuBox (
-                expanded = expanded.value,
-                onExpandedChange = { expanded.value = !expanded.value }
-            ) {
-                TextField(
-                    readOnly = true,
-                    value = selectedCategory?.name ?: "Select Category",
-                    onValueChange = {},
-                    label = { Text("Category") },
-                    trailingIcon = {
-                        ExposedDropdownMenuDefaults.TrailingIcon(expanded.value)
-                    },
-                    modifier = Modifier
-                        .menuAnchor()
-                        .fillMaxWidth()
-                )
-
-                ExposedDropdownMenu(
-                    expanded = expanded.value,
-                    onDismissRequest = { expanded.value = false }
-                ) {
-                    categories.forEach { category ->
-                        DropdownMenuItem(
-                            text = { Text(category.name) },
-                            onClick = {
-                                onCategorySelected(category)
-                                expanded.value = false
-                            }
-                        )
+        ExposedDropdownMenu(
+            expanded = expanded.value,
+            onDismissRequest = { expanded.value = false }
+        ) {
+            categories.forEach { category ->
+                DropdownMenuItem(
+                    text = { Text(category.name) },
+                    onClick = {
+                        onCategorySelected(category)
+                        expanded.value = false
                     }
-                }
+                )
             }
         }
     }

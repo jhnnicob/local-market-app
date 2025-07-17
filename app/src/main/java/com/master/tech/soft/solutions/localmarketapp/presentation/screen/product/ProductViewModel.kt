@@ -52,6 +52,10 @@ class ProductViewModel @Inject constructor(
         _uiState.update { it.copy(inStock = inStock) }
     }
 
+//    init {
+//        loadCategories()
+//    }
+
     fun submitProduct(onSuccess: () -> Unit, onError: (String) -> Unit) {
         val state = _uiState.value
 
@@ -90,27 +94,39 @@ class ProductViewModel @Inject constructor(
     }
 
     fun loadCategories() {
-        Log.e("ProductViewModel", "Getting categories...")
 
         viewModelScope.launch {
-            _categoryState.value = _categoryState.value.copy(isLoading = true, error = null)
+            Log.d("ProductAddBottomSheet", "ProductViewModel Initial _categoryState ${_categoryState.value}")
 
             try {
-                Log.e("ProductViewModel", "Getting categories...")
                 val categories = productRepository.getAllCategory()
-                _categoryState.value = _categoryState.value.copy(
-                    categories = categories,
-                    isLoading = false
-                )
-                Log.e("ProductViewModel", "Getting categories ${_categoryState.value}")
-
+                _categoryState.update {
+                    it.copy(
+                        categories = categories,
+                        isLoading = false
+                    )
+                }
+                Log.d("ProductAddBottomSheet", "ProductViewModel Getting categories ${_categoryState.value}")
             } catch (e: Exception) {
-                Log.e("ProductViewModel", "Error loading categories", e)
-                _categoryState.value = _categoryState.value.copy(
-                    error = e.message,
-                    isLoading = false
-                )
+                Log.e("ProductAddBottomSheet", "ProductViewModel Error loading categories", e)
+                _categoryState.update {
+                    it.copy(
+                        error = e.message,
+                        isLoading = false
+                    )
+                }
             }
+        }
+    }
+
+    fun resetCategoryState() {
+        _categoryState.update {
+            it.copy(
+                isLoading = true,
+                error = null,
+                categories = emptyList(),
+                selectedCategory = null
+            )
         }
     }
 

@@ -1,5 +1,6 @@
 package com.master.tech.soft.solutions.localmarketapp.presentation.screen.product.components
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,38 +24,37 @@ fun ProductTextField(
     imeAction: ImeAction = ImeAction.Next,
     isError: Boolean = false,
     errorMessage: String? = null,
-    leadingIcon: @Composable (() -> Unit)? = null,
+    leadingIcon: (@Composable (() -> Unit))? = null,
     onNext: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        label = { Text(label) },
-        leadingIcon = leadingIcon,
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp),
-        keyboardOptions = KeyboardOptions(
-            keyboardType = keyboardType,
-            imeAction = imeAction
-        ),
-        keyboardActions = KeyboardActions(
-            onNext = {
-                onNext?.invoke()
-            }
-        ),
-        singleLine = true,
-        isError = isError,
-        shape = RoundedCornerShape(12.dp)
-    )
-
-    if (isError && errorMessage != null) {
-        Text(
-            text = errorMessage,
-            color = MaterialTheme.colorScheme.error,
-            style = MaterialTheme.typography.labelSmall,
-            modifier = Modifier.padding(start = 16.dp)
+    Column(modifier = modifier.padding(vertical = 6.dp)) {
+        OutlinedTextField(
+            value = value,
+            onValueChange = onValueChange,
+            label = { Text(text = label) },
+            leadingIcon = leadingIcon,
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = keyboardType,
+                imeAction = imeAction
+            ),
+            keyboardActions = KeyboardActions(
+                onNext = { onNext?.invoke() }
+            ),
+            singleLine = true,
+            isError = isError,
+            shape = RoundedCornerShape(12.dp)
         )
+
+        // Avoid recomposing this Text when not needed
+        if (isError && errorMessage != null) {
+            Text(
+                text = errorMessage,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.labelSmall,
+                modifier = Modifier.padding(start = 16.dp, top = 2.dp)
+            )
+        }
     }
 }

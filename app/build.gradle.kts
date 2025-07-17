@@ -87,4 +87,7 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4")
     implementation("androidx.compose.ui:ui-text-google-fonts:1.5.0")
+    implementation("androidx.compose.material3:material3:1.2.1")
+    implementation("com.google.accompanist:accompanist-placeholder-material:0.32.0")
+
 }
